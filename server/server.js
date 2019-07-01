@@ -13,7 +13,18 @@ let server = http.createServer(app);
 let io = socketIO(server);//we'll get web socket Server.
 //io will be responsible for listening to server
 io.on('connection',(socket)=>{
-  console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
+  // console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
+socket.emit("newMessage",{
+  from:"admin",
+  text:"Welcome to the Chat App",
+  createdAt:Date.now()
+})
+socket.broadcast.emit("newMessage",{
+  from:"admin",
+  text:"New User Joined",
+  createdAt:Date.now()
+
+})
 
   socket.on("createMessage",(message)=>{
     console.log("created Message",message);
@@ -22,8 +33,13 @@ io.on('connection',(socket)=>{
       text:message.text,
       createdAt:Date.now()
   });
-  })
+  // socket.broadcast.emit('newMessage',{
+  //   from:message.from,
+  //   text:message.text,
+  //   createdAt:Date.now()
+  // });
 
+  })
   // socket.emit('newEmail',{
   //   from:"harshitsan@example.com",
   //   text:"hey what is going on",
