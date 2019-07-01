@@ -15,14 +15,13 @@ let io = socketIO(server);//we'll get web socket Server.
 io.on('connection',(socket)=>{
   console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
 
-  socket.emit('newMessage',{
-    from:"harshit",
-    text:"Awesome howz you!!",
-    createdAt:Date.now()
-});
   socket.on("createMessage",(message)=>{
-    message.createdAt = Date.now();//create at server so that client may not spoof it
-    console.log("Message created :",message);
+    console.log("created Message",message);
+    io.emit('newMessage',{
+      from:message.from,
+      text:message.text,
+      createdAt:Date.now()
+  });
   })
 
   // socket.emit('newEmail',{

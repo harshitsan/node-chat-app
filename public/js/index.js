@@ -7,10 +7,6 @@ socket.on("connect",function(){//connection event also exists in client that wil
   //   text:"hey i am awesome"
   // });
 
-  socket.emit('createMessage',{
-    to:"harshit",
-    text:"hey buddy whatsupp"
-  });
 
 console.log("connected to server");
 })
