@@ -2,37 +2,22 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
-
+const {generateMessage} = require("./utils/message.js");
 const app = express();
 let port = process.env.PORT ||3000;
 //console.log(__dirname+'/../public');// /home/naruto/programming/node/node-chat-app/server/../public
 // console.log(path.join(__dirname,'..','public'));// /home/naruto/programming/node/node-chat-app/public
 const publicPath = path.join(__dirname,'..','public');
-
 let server = http.createServer(app);
 let io = socketIO(server);//we'll get web socket Server.
 //io will be responsible for listening to server
 io.on('connection',(socket)=>{
   // console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
-socket.emit("newMessage",{
-  from:"admin",
-  text:"Welcome to the Chat App",
-  createdAt:Date.now()
-})
-socket.broadcast.emit("newMessage",{
-  from:"admin",
-  text:"New User Joined",
-  createdAt:Date.now()
-
-})
-
+socket.emit("newMessage",generateMessage("admin","Welcome to the Chat App"));
+socket.broadcast.emit("newMessage",generateMessage("admin","New User Joined"));
   socket.on("createMessage",(message)=>{
     console.log("created Message",message);
-    io.emit('newMessage',{
-      from:message.from,
-      text:message.text,
-      createdAt:Date.now()
-  });
+    io.emit('newMessage',generateMessage(message.from,message.text));
   // socket.broadcast.emit('newMessage',{
   //   from:message.from,
   //   text:message.text,
