@@ -12,12 +12,13 @@ let server = http.createServer(app);
 let io = socketIO(server);//we'll get web socket Server.
 //io will be responsible for listening to server
 io.on('connection',(socket)=>{
-  // console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
+  console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
 socket.emit("newMessage",generateMessage("admin","Welcome to the Chat App"));
 socket.broadcast.emit("newMessage",generateMessage("admin","New User Joined"));
-  socket.on("createMessage",(message)=>{
-    console.log("created Message",message);
-    io.emit('newMessage',generateMessage(message.from,message.text));
+socket.on("createMessage",(message,callback)=>{
+  console.log("created Message",message);
+  socket.broadcast.emit('newMessage',generateMessage(message.from,message.text));
+  callback();//Sends Acknowledement
   // socket.broadcast.emit('newMessage',{
   //   from:message.from,
   //   text:message.text,

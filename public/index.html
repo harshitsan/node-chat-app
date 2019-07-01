@@ -3,11 +3,17 @@
   <head>
     <meta charset="utf-8">
     <title></title>
+    <script src="/js/jquery.js"></script>
   </head>
   <body>
     <h1>Welcome to chat-app</h1>
+    <ul id="chat-area"></ul>
+
+      <form id="chat-form">
+        <input type="text" name="message">
+        <button type="submit" name="button">Send</button>
+      </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/index.js"></script>
-
   </body>
 </html>
