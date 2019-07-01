@@ -7,19 +7,7 @@
   <body>
     <h1>Welcome to chat-app</h1>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      let socket = io();//inititaling the req from client to server to open the web socket and keep that connection open.
-      socket.on("connect",()=>{//connection event also exists in client that will tell successfuly connected with server.
-        //on method is exactly the same.
-        //console tab i like terminal in node.
-      console.log("connected to server");
-      })
-      socket.on("disconnect",()=>{//connection event also exists in client that will tell successfuly connected with server.
-        //on method is exactly the same.
-        //console tab i like terminal in node.
-      console.log("disconnected to server");
-      })
-    </script>
+    <script src="js/index.js"></script>
 
   </body>
 </html>
