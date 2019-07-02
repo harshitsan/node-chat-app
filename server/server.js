@@ -2,7 +2,7 @@ const path = require('path');
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
-const {generateMessage} = require("./utils/message.js");
+const {generateMessage,generateLocationMessage} = require("./utils/message.js");
 const app = express();
 let port = process.env.PORT ||3000;
 //console.log(__dirname+'/../public');// /home/naruto/programming/node/node-chat-app/server/../public
@@ -12,10 +12,17 @@ let server = http.createServer(app);
 let io = socketIO(server);//we'll get web socket Server.
 //io will be responsible for listening to server
 io.on('connection',(socket)=>{
-  console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
+
+console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
+
 socket.emit("newMessage",generateMessage("admin","Welcome to the Chat App"));
+
 socket.broadcast.emit("newMessage",generateMessage("admin","New User Joined"));
+socket.on("createLocationMessage",(coords)=>{
+  io.emit('newLocationMessage',generateLocationMessage('admin',coords.latitude,coords.longitude));
+});
 socket.on("createMessage",(message,callback)=>{
+
   console.log("created Message",message);
   socket.broadcast.emit('newMessage',generateMessage(message.from,message.text));
   callback();//Sends Acknowledement
