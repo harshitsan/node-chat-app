@@ -24,7 +24,7 @@ socket.on("createLocationMessage",(coords)=>{
 socket.on("createMessage",(message,callback)=>{
 
   console.log("created Message",message);
-  socket.broadcast.emit('newMessage',generateMessage(message.from,message.text));
+  io.emit('newMessage',generateMessage(message.from,message.text));
   callback();//Sends Acknowledement
   // socket.broadcast.emit('newMessage',{
   //   from:message.from,

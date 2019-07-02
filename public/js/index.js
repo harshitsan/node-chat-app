@@ -6,13 +6,12 @@ socket.on("connect",function(){//connection event also exists in client that wil
 
   $("#chat-form").on("submit",function(event){
     event.preventDefault();
-    let inputValue = $("[name=message]").val();//value in input field
-
+    let inputTextBox = $("[name=message]")//value in input field
     socket.emit('createMessage',{
       from:"User",
-      text:inputValue
+      text:inputTextBox.val()
     }, function(){
-      console.log("message recieved, Acknowledement from server");
+      inputTextBox.val("");//once the Acknowledement recieved by server
     });
   // console.log();
   })
@@ -28,7 +27,7 @@ socket.on('newMessage',function(message){ //the calback function will reacive da
 });
 
 socket.on('newLocationMessage',function(message){ //the calback function will reacive data sent by server emit function
-  console.log(message.url);
+  // console.log(message.url);
   $("#chat-area").append(`<li>From : ${message.from}, <a target="_blank" href=${message.url}>My Current Url</a></li>`);
 });
 
@@ -47,8 +46,10 @@ let locationButton = $("#send-location");
 locationButton.on("click",function(){
   if(!navigator.geolocation)
     return alert("geolocation not supported");
-  else
+    locationButton.attr('disabled','disabled').text('Sending location...');
     navigator.geolocation.getCurrentPosition(function(position){
+      locationButton.removeAttr('disabled').text('Send location');
+
       socket.emit('createLocationMessage',{
         latitude:position.coords.latitude,
         longitude:position.coords.longitude
