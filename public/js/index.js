@@ -23,12 +23,12 @@ console.log("disconnected to server");
 })
 
 socket.on('newMessage',function(message){ //the calback function will reacive data sent by server emit function
-  $("#chat-area").append(`<li>From : ${message.from}, Message: ${message.text}</li>`);
+  $("#chat-area").append(`<li>${message.from} ${moment(message.createdAt).format('h:mm a')}:${message.text}</li>`);
 });
 
 socket.on('newLocationMessage',function(message){ //the calback function will reacive data sent by server emit function
   // console.log(message.url);
-  $("#chat-area").append(`<li>From : ${message.from}, <a target="_blank" href=${message.url}>My Current Url</a></li>`);
+  $("#chat-area").append(`<li>${message.from}  ${moment(message.createdAt).format('h:mm a')}: <a target="_blank" href=${message.url}>My Current Url</a></li>`);
 });
 
 //creating custom event

@@ -15,11 +15,11 @@ io.on('connection',(socket)=>{
 
 console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
 
-socket.emit("newMessage",generateMessage("admin","Welcome to the Chat App"));
+socket.emit("newMessage",generateMessage("Admin","Welcome to the Chat App"));
 
-socket.broadcast.emit("newMessage",generateMessage("admin","New User Joined"));
+socket.broadcast.emit("newMessage",generateMessage("Admin","New User Joined"));
 socket.on("createLocationMessage",(coords)=>{
-  io.emit('newLocationMessage',generateLocationMessage('admin',coords.latitude,coords.longitude));
+  io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude));
 });
 socket.on("createMessage",(message,callback)=>{
 
