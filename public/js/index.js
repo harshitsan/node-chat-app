@@ -1,4 +1,29 @@
 let socket = io();//inititaling the req from client to server to open the web socket and keep that connection open.
+
+//AutoScroll
+
+function scrollToBottom(){
+// console.log("hye");
+  //selectors
+  let messages = $("#chat-area");
+  let newMessage = messages.children('li:last-child');
+
+  //heights
+  let clientHeight = messages.prop('clientHeight');
+  let scrollTop = messages.prop('scrollTop');
+  let scrollHeight = messages.prop('scrollHeight');
+  let newMessageHeight = newMessage.innerHeight();
+  let lastMessageHeight = newMessage.prev().innerHeight();
+
+  if(clientHeight + scrollTop + newMessageHeight+ lastMessageHeight >=  scrollHeight)
+    // console.log('Should scroll');
+    {
+      messages.scrollTop(scrollHeight);
+    }
+}
+
+
+
 socket.on("connect",function(){//connection event also exists in client that will tell successfuly connected with server.
   //on method is exactly the same as on server.
   //console tab is like terminal in node.
@@ -23,12 +48,32 @@ console.log("disconnected to server");
 })
 
 socket.on('newMessage',function(message){ //the calback function will reacive data sent by server emit function
-  $("#chat-area").append(`<li>${message.from} ${moment(message.createdAt).format('h:mm a')}:${message.text}</li>`);
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+  var template = $("#message-template").html();
+  var html = Mustache.render(template,{
+    from:message.from,
+    text:message.text,
+    time:formattedTime
+  });
+  $("#chat-area").append(html);
+scrollToBottom();
+
+  //$("#chat-area").append(`<li>${message.from} ${moment(message.createdAt).format('h:mm a')}:${message.text}</li>`);
 });
 
 socket.on('newLocationMessage',function(message){ //the calback function will reacive data sent by server emit function
   // console.log(message.url);
-  $("#chat-area").append(`<li>${message.from}  ${moment(message.createdAt).format('h:mm a')}: <a target="_blank" href=${message.url}>My Current Url</a></li>`);
+  var formattedTime = moment(message.createdAt).format('h:mm a');
+  var template = $("#location-message-template").html();
+  var html = Mustache.render(template,{
+    from:message.from,
+    url:message.url,
+    time:formattedTime
+  });
+  $("#chat-area").append(html);
+  scrollToBottom();
+
+//  $("#chat-area").append(`<li>${message.from}  ${moment(message.createdAt).format('h:mm a')}: <a target="_blank" href=${message.url}>My Current Url</a></li>`);
 });
 
 //creating custom event
