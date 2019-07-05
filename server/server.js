@@ -3,6 +3,11 @@ const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
 const {generateMessage,generateLocationMessage} = require("./utils/message.js");
+const {isRealString} = require('./utils/validation');
+const {Users} = require('./utils/users');
+
+
+let users = new Users();
 const app = express();
 let port = process.env.PORT ||3000;
 //console.log(__dirname+'/../public');// /home/naruto/programming/node/node-chat-app/server/../public
@@ -15,10 +20,26 @@ io.on('connection',(socket)=>{
 
 console.log("New user connected");//web sockets are persistent technology lient and server both keeps the channel open for as long as they both wanted.
 
-socket.emit("newMessage",generateMessage("Admin","Welcome to the Chat App"));
 
-socket.broadcast.emit("newMessage",generateMessage("Admin","New User Joined"));
+socket.on("join",(params,callback)=>{
+  if(isRealString(params.name)  &&  isRealString(params.room))
+    {
+      socket.join(params.room);
+      users.removeUser(socket.id);
+      users.addUser(socket.id,  params.name, params.room);
+      io.to(params.room).emit('updateUsersList',users.getUserList(params.room));
+
+      socket.emit("newMessage",generateMessage("Admin","Welcome to the Chat App"));
+      socket.broadcast.to(params.room).emit("newMessage",generateMessage("Admin",`${params.name} Joined`));
+      callback();
+    }
+    else
+      return callback("name and room name required");
+
+});
+
 socket.on("createLocationMessage",(coords)=>{
+
   io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude));
 });
 socket.on("createMessage",(message,callback)=>{
@@ -45,7 +66,16 @@ socket.on("createMessage",(message,callback)=>{
 //   console.log("Email created",newEmail);
 // })
   socket.on("disconnect",()=>{
+    let user = users.removeUser(socket.id);
+    if(user)
+    {
+      io.to(user.room).emit('updateUsersList',users.getUserList(user.room));
+      io.to(user.room).emit('newMessage',generateMessage('Admin',`${user.name} has left`));
+
+    }
+
     console.log("User Was Disconnected");
+
   })
 });//register event listener "built in event connection client connected to server lets you do something when the connection comes in"
 

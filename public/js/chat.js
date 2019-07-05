@@ -27,7 +27,18 @@ function scrollToBottom(){
 socket.on("connect",function(){//connection event also exists in client that will tell successfuly connected with server.
   //on method is exactly the same as on server.
   //console tab is like terminal in node.
+  let params = jQuery.deparam(window.location.search);
+  socket.emit('join',params,function(err){
+    if(err){
+      alert(err);
+      window.location.href='/';
+    } else{
+      console.log("No Error");
+    }
 
+  });
+  console.log("connected to server");
+  })
 
   $("#chat-form").on("submit",function(event){
     event.preventDefault();
@@ -40,12 +51,19 @@ socket.on("connect",function(){//connection event also exists in client that wil
     });
   // console.log();
   })
-console.log("connected to server");
-})
 socket.on("disconnect",function(){//connect event also exists in client that will tell disconnected with server.
   //on method is exactly the same.
 console.log("disconnected to server");
 })
+socket.on('updateUsersList',function(users){
+// console.log(e);
+let ol = $('<ol></ol>');
+users.forEach((user)=>{
+  ol.append($('<li></li>').text(user));
+})
+$("#users").html(ol);
+
+});
 
 socket.on('newMessage',function(message){ //the calback function will reacive data sent by server emit function
   var formattedTime = moment(message.createdAt).format('h:mm a');
