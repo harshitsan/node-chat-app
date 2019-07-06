@@ -35,17 +35,18 @@ socket.on("join",(params,callback)=>{
     }
     else
       return callback("name and room name required");
+    });
 
-});
 
 socket.on("createLocationMessage",(coords)=>{
-
-  io.emit('newLocationMessage',generateLocationMessage('Admin',coords.latitude,coords.longitude));
+  let user = users.getUser(socket.id);
+  io.to(user.room).emit('newLocationMessage',generateLocationMessage(user.name,coords.latitude,coords.longitude));
 });
 socket.on("createMessage",(message,callback)=>{
 
-  console.log("created Message",message);
-  io.emit('newMessage',generateMessage(message.from,message.text));
+  // console.log("created Message",message);
+  let user = users.getUser(socket.id);
+  io.to(user.room).emit('newMessage',generateMessage(user.name,message.text));
   callback();//Sends Acknowledement
   // socket.broadcast.emit('newMessage',{
   //   from:message.from,
@@ -53,7 +54,8 @@ socket.on("createMessage",(message,callback)=>{
   //   createdAt:Date.now()
   // });
 
-  })
+});
+
   // socket.emit('newEmail',{
   //   from:"harshitsan@example.com",
   //   text:"hey what is going on",

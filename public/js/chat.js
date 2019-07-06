@@ -44,7 +44,7 @@ socket.on("connect",function(){//connection event also exists in client that wil
     event.preventDefault();
     let inputTextBox = $("[name=message]")//value in input field
     socket.emit('createMessage',{
-      from:"User",
+      // from:"User",
       text:inputTextBox.val()
     }, function(){
       inputTextBox.val("");//once the Acknowledement recieved by server
